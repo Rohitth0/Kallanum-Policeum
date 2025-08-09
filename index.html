@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KALLANUM POLICEUM - Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- FONT IMPORTS (UPDATED) --- */
+        @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;700&display=swap');
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body { 
+            /* UPDATED FONT */
+            font-family: 'Libre Franklin', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            background: #8e9eab;
+            background: -webkit-linear-gradient(to right, #eef2f3, #8e9eab);
+            background: linear-gradient(to right, #eef2f3, #eef2f3);
+            overflow: hidden; 
+        }
+        
+        .game-wrapper {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .container { 
+            text-align: center; 
+            width: 90%; 
+            max-width: 400px; 
+            background: rgba(255, 255, 255, 0.4);
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        h1, h2, h3 { 
+            /* UPDATED FONT */
+            font-family: 'Libre Baskerville', serif;
+            color: #1c1e21; 
+        }
+
+        input { 
+            width: calc(100% - 22px); padding: 12px; margin-bottom: 10px; 
+            border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); 
+            font-size: 1em; background: rgba(255, 255, 255, 0.5);
+            /* UPDATED FONT */
+            font-family: 'Libre Franklin', sans-serif;
+        }
+
+        button { 
+            width: 100%; padding: 12px 15px; margin-top: 5px; 
+            border-radius: 8px; border: none; background-color: #1877f2; 
+            color: white; cursor: pointer; font-size: 1.1em; 
+            font-weight: bold; 
+            /* UPDATED FONT */
+            font-family: 'Libre Franklin', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        button:hover { 
+            box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4);
+            transform: translateY(-2px);
+        }
+
+        button.guess-btn { background-color: #c9184a; color: white; margin-top: 10px; }
+        button.guess-btn:hover { box-shadow: 0 4px 15px rgba(201, 24, 74, 0.5); }
+        hr { border: 0; height: 1px; background: rgba(0,0,0,0.1); margin: 20px 0; }
+        #lobby, #game-screen, #round-result-screen { margin-top: 20px; }
+        #player-list, #scoreboard { padding: 0; }
+        #player-list li, #scoreboard li { 
+            list-style: none; padding: 10px; background: rgba(255, 255, 255, 0.5); 
+            color: #333; margin: 5px 0; border-radius: 8px; 
+            font-weight: 500; transition: all 0.2s ease;
+        }
+        #player-list li:hover, #scoreboard li:hover {
+            transform: scale(1.03);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        #startGameBtn, #nextRoundBtn { background-color: #42b72a; }
+        #startGameBtn:hover, #nextRoundBtn:hover { box-shadow: 0 4px 15px rgba(66, 183, 42, 0.5); }
+        .result-correct { color: #2d6a4f; font-weight: bold; }
+        .result-incorrect { color: #c9184a; font-weight: bold; }
+        
+        /* --- Player Switcher Styles --- */
+        .player-switcher {
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .player-switcher button {
+            width: auto;
+            display: inline-block;
+            margin: 0 5px;
+            padding: 8px 16px;
+            background-color: #fff;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .player-switcher button.active {
+            background-color: #ffc107;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="container">
+            <div id="join-screen">
+                <h1>KALLANUM POLICEUM</h1>
+                <p style="font-family: 'Libre Franklin', sans-serif;">Enter 4 player names to begin the simulation.</p>
+                <input type="text" id="p1Name" placeholder="Player 1 Name" value="Anjali">
+                <input type="text" id="p2Name" placeholder="Player 2 Name" value="Rohan">
+                <input type="text" id="p3Name" placeholder="Player 3 Name" value="Priya">
+                <input type="text" id="p4Name" placeholder="Player 4 Name" value="Vikram">
+                <button id="setupGameBtn">Setup Game</button>
+            </div>
+            <div id="lobby" style="display:none;">
+                <h2>Lobby Room: <span id="roomCodeDisplay"></span></h2>
+                <h3>Players:</h3>
+                <ul id="player-list"></ul>
+                <button id="startGameBtn">Start Game</button>
+            </div>
+            <div id="game-screen" style="display:none;">
+                <h2>The game has begun!</h2>
+                <p style="font-size: 1.5em;">You are the: <b id="player-role"></b></p>
+                <div id="action-area"></div>
+            </div>
+            <div id="round-result-screen" style="display:none;">
+                <h2 id="result-title">Round Over!</h2>
+                <p id="result-text"></p>
+                <h3>Scoreboard</h3>
+                <ul id="scoreboard"></ul>
+                <button id="nextRoundBtn" style="display:none;">Next Round</button>
+            </div>
+        </div>
+    </div>
+    <div id="player-switcher" class="player-switcher" style="display:none;"></div>
+
+    <script>
+        // --- DOM Elements ---
+        const screens = { join: document.getElementById('join-screen'), lobby: document.getElementById('lobby'), game: document.getElementById('game-screen'), result: document.getElementById('round-result-screen') };
+        const setupGameBtn = document.getElementById('setupGameBtn'), startGameBtn = document.getElementById('startGameBtn'), nextRoundBtn = document.getElementById('nextRoundBtn');
+        const roomCodeDisplay = document.getElementById('roomCodeDisplay'), playerList = document.getElementById('player-list'), playerRole = document.getElementById('player-role'), actionArea = document.getElementById('action-area'), resultTitle = document.getElementById('result-title'), resultText = document.getElementById('result-text'), scoreboard = document.getElementById('scoreboard');
+        const playerSwitcher = document.getElementById('player-switcher');
+
+        // --- Game State Simulation ---
+        let room = {};
+        let currentPlayerIndex = 0; // 0 for Player 1, 1 for Player 2, etc.
+
+        // --- UI Functions ---
+        function showScreen(screenName) {
+            for (let key in screens) { screens[key].style.display = 'none'; }
+            if (screens[screenName]) screens[screenName].style.display = 'block';
+        }
+        
+        function switchPlayerView(index) {
+            currentPlayerIndex = index;
+            updateUI();
+        }
+
+        function updateUI() {
+            if (!room.players || room.players.length === 0) return;
+
+            const me = room.players[currentPlayerIndex];
+
+            // Update player switcher active button
+            document.querySelectorAll('.player-switcher button').forEach((btn, i) => {
+                btn.classList.toggle('active', i === currentPlayerIndex);
+            });
+
+            // Update game screen based on current player's perspective
+            if (room.state === 'lobby') {
+                showScreen('lobby');
+                roomCodeDisplay.innerText = room.roomCode;
+                playerList.innerHTML = '';
+                room.players.forEach(p => playerList.appendChild(document.createElement('li')).innerText = p.name);
+                startGameBtn.style.display = (me.isHost) ? 'block' : 'none';
+            } else if (room.state === 'game') {
+                showScreen('game');
+                playerRole.innerText = me.role;
+                actionArea.innerHTML = '';
+
+                if (me.role === 'Police') {
+                    actionArea.innerHTML = '<h3>Who is the Kallan?</h3>';
+                    room.players.forEach(p => {
+                        if (p.id !== me.id) {
+                            const guessButton = document.createElement('button');
+                            guessButton.innerText = `Guess ${p.name}`;
+                            guessButton.onclick = () => handleMakeGuess(p.id);
+                            actionArea.appendChild(guessButton);
+                        }
+                    });
+                } else {
+                    actionArea.innerHTML = '<p>Waiting for the Police to make a guess...</p>';
+                }
+            } else if (room.state === 'decision') {
+                showScreen('game'); // Still on the game screen, but action area changes
+                playerRole.innerText = me.role;
+                actionArea.innerHTML = '';
+
+                if (me.role === 'Raja') {
+                     actionArea.innerHTML = `<h3>You are the Raja. Do you feel generous?</h3>`;
+                    const yesBtn = document.createElement('button'); yesBtn.innerText = 'Yes, reward them.';
+                    yesBtn.onclick = () => handleRajaDecision('yes');
+                    const noBtn = document.createElement('button'); noBtn.innerText = 'No, they get nothing.';
+                    noBtn.className = 'guess-btn'; noBtn.onclick = () => handleRajaDecision('no');
+                    actionArea.appendChild(yesBtn); actionArea.appendChild(noBtn);
+                } else {
+                    actionArea.innerHTML = `<p>The Police has made a guess... waiting for the Raja's decree...</p>`;
+                }
+            } else if (room.state === 'result') {
+                showScreen('result');
+                const result = room.lastResult;
+                if (result.rajaWasGenerous) {
+                    resultTitle.innerText = `The Raja was generous!`;
+                    resultText.innerHTML = `${result.policeName} guessed ${result.guessedName}. <span class="${result.correctGuess ? 'result-correct' : 'result-incorrect'}">${result.correctGuess ? 'Correct!' : 'Incorrect!'}</span>`;
+                } else {
+                    resultTitle.innerText = `The Raja was NOT generous!`;
+                    resultText.innerHTML = `No points were awarded, except to the mighty Raja.`;
+                }
+                scoreboard.innerHTML = '';
+                room.players.sort((a, b) => b.score - a.score).forEach(p => {
+                    const playerScore = document.createElement('li');
+                    playerScore.innerText = `${p.name} (${p.role}): ${p.score} points`;
+                    scoreboard.appendChild(playerScore);
+                });
+                nextRoundBtn.style.display = (me.isHost) ? 'block' : 'none';
+            }
+        }
+
+        // --- FAKE SERVER LOGIC (WITH FIXES) ---
+        function handleSetupGame() {
+            const playerNames = [
+                document.getElementById('p1Name').value,
+                document.getElementById('p2Name').value,
+                document.getElementById('p3Name').value,
+                document.getElementById('p4Name').value
+            ];
+            if (playerNames.some(name => name.trim() === '')) {
+                alert('Please enter names for all 4 players.');
+                return;
+            }
+
+            room = {
+                roomCode: 'PREV',
+                players: playerNames.map((name, i) => ({
+                    id: i,
+                    name: name,
+                    score: 0,
+                    isHost: i === 0
+                })),
+                state: 'lobby'
+            };
+            
+            playerSwitcher.innerHTML = '';
+            room.players.forEach((p, i) => {
+                const btn = document.createElement('button');
+                btn.innerText = p.name;
+                btn.onclick = () => switchPlayerView(i);
+                playerSwitcher.appendChild(btn);
+            });
+            playerSwitcher.style.display = 'block';
+            
+            switchPlayerView(0); // Start as Player 1
+        }
+
+        function handleStartGame() {
+            room.state = 'game';
+            const roles = ['Raja', 'Mantri', 'Police', 'Kallan'];
+            for (let i = roles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [roles[i], roles[j]] = [roles[j], roles[i]];
+            }
+            room.players.forEach((p, i) => p.role = roles[i]);
+            updateUI();
+        }
+
+        function handleMakeGuess(guessedPlayerId) {
+            const police = room.players.find(p => p.role === 'Police');
+            const guessedPlayer = room.players.find(p => p.id === guessedPlayerId);
+            const kallan = room.players.find(p => p.role === 'Kallan');
+
+            // Robustness check
+            if (!police || !guessedPlayer || !kallan) {
+                console.error("A required role was not found. Resetting round.");
+                alert("An error occurred! Starting a new round.");
+                handleStartGame();
+                return;
+            }
+
+            room.state = 'decision';
+            room.intermediateResult = {
+                correctGuess: guessedPlayer.role === 'Kallan',
+                police,
+                guessedPlayer,
+                kallan
+            };
+            updateUI();
+        }
+        
+        function handleRajaDecision(decision) {
+            const { correctGuess, police, guessedPlayer, kallan } = room.intermediateResult;
+            const raja = room.players.find(p => p.role === 'Raja');
+            const mantri = room.players.find(p => p.role === 'Mantri');
+            
+            // This check prevents the crash
+            if (!raja) {
+                console.error("Raja not found during decision. Cannot calculate score.");
+                return;
+            }
+
+            if (decision === 'yes') {
+                if (correctGuess) police.score += 300;
+                else kallan.score += 800;
+                // Check if mantri exists before awarding points
+                if (mantri) mantri.score += 500;
+            }
+            raja.score += 1000;
+
+            room.state = 'result';
+            room.lastResult = {
+                policeName: police.name,
+                guessedName: guessedPlayer.name,
+                kallanName: kallan.name,
+                correctGuess: correctGuess,
+                rajaWasGenerous: (decision === 'yes')
+            };
+            updateUI();
+        }
+        
+        function handleNextRound() {
+            handleStartGame(); // Just restart the game logic
+        }
+
+        // --- Initial Setup ---
+        setupGameBtn.addEventListener('click', handleSetupGame);
+        startGameBtn.addEventListener('click', handleStartGame);
+        nextRoundBtn.addEventListener('click', handleNextRound);
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+/* --- FONT IMPORTS --- */
+/* 1. Keep the original Poppins font for the body text */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+/* 2. NEW: Add the import for the Berkshire Swash heading font */
+@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap');
+
+
+/* --- NEW: Keyframe animation for fade-in effect --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body { 
+    font-family: 'Poppins', sans-serif; /* This is for the regular text */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    margin: 0; 
+    
+    /* --- Gradient Background --- */
+    background: #8e9eab;
+    background: -webkit-linear-gradient(to right, #eef2f3, #8e9eab);
+    background: linear-gradient(to right, #eef2f3, #8e9eab);
+}
+
+.container { 
+    text-align: center; 
+    width: 90%; 
+    max-width: 400px; 
+    
+    /* --- "Frosted Glass" Effect (Glassmorphism) --- */
+    background: rgba(255, 255, 255, 0.4);
+    padding: 30px; 
+    border-radius: 16px; 
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* 3. APPLY THE FONT TO HEADINGS */
+h1, h2, h3 { 
+    font-family: 'Berkshire Swash', cursive; /* Use Berkshire Swash for all headings */
+    color: #1c1e21; 
+}
+
+input { 
+    width: calc(100% - 22px); 
+    padding: 12px; 
+    margin-bottom: 10px; 
+    border-radius: 8px; 
+    border: 1px solid rgba(0,0,0,0.1); 
+    font-size: 1em;
+    background: rgba(255, 255, 255, 0.5);
+    font-family: 'Poppins', sans-serif; /* Make sure inputs use the body font */
+}
+
+/* ... the rest of your button and other styles remain the same ... */
+
+button { 
+    width: 100%; 
+    padding: 12px 15px; 
+    margin-top: 5px; 
+    border-radius: 8px; 
+    border: none; 
+    background-color: #1877f2; 
+    color: white; 
+    cursor: pointer; 
+    font-size: 1.1em; 
+    font-weight: bold; 
+    font-family: 'Poppins', sans-serif; /* Make sure buttons use the body font */
+    transition: all 0.3s ease;
+}
+
+button:hover { 
+    box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4);
+    transform: translateY(-2px);
+}
+
+button.guess-btn { background-color: #ffc107; color: black; margin-top: 10px; }
+button.guess-btn:hover { box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5); }
+hr { border: 0; height: 1px; background: rgba(0,0,0,0.1); margin: 20px 0; }
+#lobby, #game-screen, #round-result-screen { margin-top: 20px; }
+#player-list, #scoreboard { padding: 0; }
+#player-list li, #scoreboard li { 
+    list-style: none; 
+    padding: 10px; 
+    background: rgba(255, 255, 255, 0.5); 
+    color: #333;
+    margin: 5px 0; 
+    border-radius: 8px; 
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#player-list li:hover, #scoreboard li:hover {
+    transform: scale(1.03);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+#startGameBtn, #nextRoundBtn { background-color: #42b72a; }
+#startGameBtn:hover, #nextRoundBtn:hover { box-shadow: 0 4px 15px rgba(66, 183, 42, 0.5); }
+.result-correct { color: #2d6a4f; font-weight: bold; }
+.result-incorrect { color: #c9184a; font-weight: bold; }
